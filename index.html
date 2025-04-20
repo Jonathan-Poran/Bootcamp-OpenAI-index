@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lambda Chat with GPT-4 - v1.0</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f4f4f4;
+    }
+    #container {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #version {
+      font-size: 0.9em;
+      color: gray;
+    }
+    textarea, button {
+      width: 100%;
+      font-size: 16px;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    #response {
+      margin-top: 20px;
+      white-space: pre-wrap;
+      background: #e6f7ff;
+      padding: 10px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h2>
+      Lambda Chat with GPT-4
+      <span id="version">v1.0</span>
+    </h2>
+    <textarea id="prompt" rows="5" placeholder="Type your message..."></textarea>
+    <button onclick="sendPrompt()">Send</button>
+    <div id="response"></div>
+  </div>
+
+  <script>
+    async function sendPrompt() {
+      const prompt = document.getElementById("prompt").value;
+      const responseDiv = document.getElementById("response");
+
+      responseDiv.innerText = "Loading...";
+
+      try {
+        const res = await fetch("https://v5tcihau7eq2gofwokfjkpewlu0obuqw.lambda-url.us-east-1.on.aws/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ user_prompt: prompt })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          responseDiv.innerText = data.ai_reply;
+        } else {
+          responseDiv.innerText = "Error: " + (data.error || "Unknown error");
+        }
+      } catch (err) {
+        responseDiv.innerText = "Error: " + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
